@@ -44,18 +44,18 @@ const bookSchema = new mongoose.Schema({
       },
     },
   ],
-  contributors: [
+  contributors: 
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Users who contributed or donated the book
+        ref: 'User', 
       },
       contributionDate: {
         type: Date,
         default: Date.now,
       },
     },
-  ],
+  
   location: {
     type: {
       type: String,

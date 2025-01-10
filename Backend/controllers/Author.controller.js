@@ -41,10 +41,11 @@ const createManyAuthors = async (req, res) => {
 };
 
 
+
 // Get all authors
 const getAllAuthors = async (req, res) => {
   try {
-    const authors = await Author.find().populate("books");
+    const authors = await Author.find(); //TODO connect with book
     res.status(200).json(authors);
   } catch (error) {
     res.status(400).json({ message: "Error fetching authors", error: error.message });
