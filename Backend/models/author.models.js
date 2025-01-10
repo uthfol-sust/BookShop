@@ -9,7 +9,19 @@ const authorSchema = new mongoose.Schema({
   biography: {
     type: String,
     default: null,
-  }
-},{timestamps:true});
+  },
+  books:
+  [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book', 
+    },
+  ]
 
-module.exports = mongoose.model('Author', authorSchema);
+  
+
+
+});
+
+const Author= mongoose.model('Author', authorSchema);
+export default Author;

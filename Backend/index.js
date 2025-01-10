@@ -17,9 +17,12 @@ app.use(cookieParser());
 
 // MongoDB connection
 connectDB();
-
-// Route setup
-app.use("/api/v1/user", userRoute); // Mount user routes
+import genreRouter from "./routes/genre.routes.js";
+import authorRouter from "./routes/author.routes.js";
+// mount all route 
+app.use("/api/v1/user", userRoute); 
+app.use("/api/v1/genre/",genreRouter);
+app.use("/api/v1/author/",authorRouter);
 
 // Test API
 app.get("/", (req, res) => {
