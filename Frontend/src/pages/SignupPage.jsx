@@ -1,116 +1,188 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import "../App.css";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirm: "", 
-    phone: "", // Changed "number" to "phone"
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(""); // Store phone number separately
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [errors, setErrors] = useState({});
-
-
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const Data={
-        
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "confirmPassword") {
+      setConfirmPassword(value);
+    } else if (name === "phoneNumber") {
+      setPhoneNumber(value); // Handle phone number separately
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
-    
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");  // Clear any previous error
+    setSuccess(""); // Clear success message on new submit
+    setIsLoading(true);
+
+    // // Password validation
+    // if (e.traget.password.value !== e.target.confirmPassword.value) {
+    //   setError("Passwords do not match.");
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    // Prepare data to send, excluding confirmPassword and phoneNumber
+    const { confirmPassword, phoneNumber, ...dataToSend } = formData;
+
+    try {
+      const response = await fetch("http://localhost:9000/api/v1/user/registration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend), // Send only relevant data
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess("Sign Up successful!");
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+        });
+        setConfirmPassword(""); // Reset confirm password field
+        setPhoneNumber(""); // Reset phone number field
+        // Optionally, redirect to another page here
+      } else {
+        setError(data.message || "Sign Up failed.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.",err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="shadow-md bg-white max-w-sm mx-auto mt-20 p-6 rounded-lg">
-      <h2 className="text-2xl theme-text font-bold text-center mb-6">Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Name Field */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-semibold mb-2">Name</label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-          
-            className="w-full px-4 py-2 mt-1 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-          {errors.name && <span className="text-red-500 text-xs">{errors.name}</span>}
-        </div>
+    <div className="flex items-center justify-center min-h-scree">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-gray-800">Sign Up</h2>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {/* Username Field */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
 
-        {/* Email Field */}
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-semibold mb-2">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-           
-            className="w-full px-4 py-2 mt-1 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-          {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
-        </div>
+          {/* Email Field */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
 
-        {/* Password Field */}
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-semibold mb-2">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-           
-          
-            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-          {errors.password && <span className="text-red-500 text-xs">{errors.password}</span>}
-        </div>
+          {/* Password Field */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
 
-        {/* Confirm Password Field */}
-        <div className="mb-4">
-          <label htmlFor="confirm" className="block text-sm font-semibold mb-2">Confirm Password</label>
-          <input
-            id="confirm"
-            type="password"
-            name="confirm"
-            value={formData.confirm}
-          
-            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-          {errors.confirm && <span className="text-red-500 text-xs">{errors.confirm}</span>}
-        </div>
+          {/* Confirm Password Field */}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
 
-        {/* Phone number Field */}
-        <div className="mb-4">
-          <label htmlFor="phone" className="block text-sm font-semibold mb-2">Phone number</label>
-          <input
-            id="phone"
-            type="number"
-            name="phone"
+          {/* Phone Number Field */}
+          <div>
+            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={phoneNumber}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-1 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
 
-            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          />
-          {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
-        </div>
+          {/* Error or Success Message */}
+          {error && <div className="text-sm text-red-500">{error}</div>}
+          {success && <div className="text-sm text-green-500">{success}</div>}
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-400 text-white py-3 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
-        >
-          Sign Up
-        </button>
-      </form>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-400 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50"
+          >
+            { "Sign Up"}
+          </button>
+        </form>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
-        Already have an account?{" "}
-        <a
-          href="/"
-          className="text-blue-500 hover:underline"
-        >
-          Login
-        </a>
-      </p>
+        {/* Footer */}
+        <p className="mt-4 text-sm text-center text-gray-600">
+          Already have an account?{" "}
+          <a href="/" className="text-blue-500 hover:underline">
+            Log in
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

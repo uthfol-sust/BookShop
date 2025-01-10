@@ -1,4 +1,4 @@
-import React from "react";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./compontents/NavBar";
 import Homepage from "./pages/Homepage";
@@ -13,7 +13,7 @@ function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<Loginpage />} />
-          <Route path="/Signup" element={<SignupPage />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/Home" element={<Homepage />} />
           <Route path="/Profilepage" element={<Profilepage />} />
         </Routes>
