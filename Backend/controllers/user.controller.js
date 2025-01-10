@@ -113,7 +113,7 @@ const loginUser= async(req,res) =>{
 // Get All Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().populate("booksOwned borrowedBooks wishlist");
+    const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -124,32 +124,29 @@ const getAllUsers = async (req, res) => {
 // Get a Single User by ID
 const getUserById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // Corrected to req.params
+    console.log(userId);
 
-    // Check if the ID is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid user ID." });
-    }
 
-    const user = await User.findById(userId).populate("booksOwned borrowedBooks wishlist");
+    const user = await User.findById(userId); 
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error fetching user:", error);
-    res.status(500).json({ message: "Internal server error." });
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Update User by ID
+
 const updateUserById = async (req, res) => {
   try {
     const { userId } = req.params;
     const updates = req.body;
 
-    // Check if the ID is valid
+
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid user ID." });
     }

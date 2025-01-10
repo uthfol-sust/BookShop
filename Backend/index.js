@@ -7,7 +7,7 @@ import userRoute from "./routes/user.routes.js"; // Import the user route
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9000;
 
 // Middleware
 app.use(express.json({ limit: "20kb" }));
@@ -29,4 +29,12 @@ app.get("/", (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+});
+app.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use`);
+      process.exit(1);
+  } else {
+      throw error;
+  }
 });

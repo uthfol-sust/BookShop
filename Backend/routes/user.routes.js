@@ -21,7 +21,7 @@ router.post('/logout', logoutUser);
 router.get('/all',verifyAuth, getAllUsers);
 
 // Route to get a single user by ID
-router.get('/:userId',verifyAuth, getUserById);
+router.get('/:userId', getUserById);
 
 // Route to update a user by ID
 router.put('/:userId', updateUserById);
