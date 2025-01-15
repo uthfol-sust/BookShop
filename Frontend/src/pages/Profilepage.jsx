@@ -1,14 +1,14 @@
-import React from 'react';
 import { FaRegUser } from "react-icons/fa";
 
 function Profilepage() {
+
   return (
     <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col p-4">
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-6">
         <FaRegUser/>
-        <h3 className="text-lg font-semibold">Arthur Alvarez</h3>
-        <p className="text-sm text-gray-500">Premium Plan</p>
+        <h3 className="text-lg font-semibold">Welcome, XYZ!</h3>
+        <p className="text-sm text-gray-500">Email:</p>
       </div>
 
       {/* Navigation Menu */}

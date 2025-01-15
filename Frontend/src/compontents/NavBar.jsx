@@ -1,33 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineNotificationAdd } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import '../App.css'
-
+import '../App.css';
 
 const NavBar = () => {
 
   const [hasNotification, setHasNotification] = useState(false);
-  const [profilePic, setProfilePic] = useState('');
-
-  useEffect(() => {
-    const fetchProfilePic = async () => {
-      try {
-        const response = await fetch('https://your-backend-api.com/profile-picture');
-        if (response.ok) {
-          const data = await response.json();
-          setProfilePic(data.profilePicUrl);
-        } else {
-          console.error('Failed to fetch profile picture');
-        }
-      } catch (error) {
-        console.error('Error fetching profile picture:', error);
-      }
-    };
-
-    fetchProfilePic();
-  }, []);
 
   const toggleNotification = () => {
     setHasNotification(prevState => !prevState);
@@ -105,15 +85,7 @@ const NavBar = () => {
             {/* Profilepage */}
             <button>
               <Link to="/Profilepage">
-                {profilePic ? (
-                  <img
-                    src={profilePic}
-                    alt="Profile"
-                    className="w-7 h-7 rounded-full border-2 border-black p-1"
-                  />
-                ) : (
-                  <FaRegUser className="w-7 h-7 text-gray-400 rounded-full border-2 border-black p-1" />
-                )}
+                <FaRegUser className="w-7 h-7 text-gray-400 rounded-full border-2 border-black p-1" />
               </Link>
             </button>
           </div>
@@ -129,4 +101,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-

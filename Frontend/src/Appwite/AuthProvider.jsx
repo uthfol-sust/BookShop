@@ -1,75 +1,75 @@
-import React, { createContext, useState, useEffect } from "react";
-import authService from "./aurh"; 
+import { createContext, useContext, useState, useEffect } from 'react';
+import authService from './auth'; // Import AuthService
 
-const AuthContext = createContext();
+// Create the UserContext
+const UserContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Provider component
+export const UserProvider = ({ children }) => {
+  // State for user info
+  const [user, setUser] = useState({
+    id: null,
+    name: '',
+    email: '',
+    isLoggedIn: false,
+  });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
-        setUser(null); // Ensure user is null if fetching fails
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
+  // Function to update user info after login or when fetched
+  const updateUser = async () => {
+    const currentUser = await authService.getCurrentUser();
+    if (currentUser) {
+      setUser({
+        id: currentUser.$id,
+        name: currentUser.name || '',
+        email: currentUser.email,
+        isLoggedIn: true,
+      });
+    } else {
+      setUser({
+        id: null,
+        name: '',
+        email: '',
+        isLoggedIn: false,
+      });
+    }
+  };
 
+  // Login function
   const login = async (email, password) => {
     try {
-      const session = await authService.login(email, password);
-      const currentUser = await authService.getCurrentUser();
-      setUser(currentUser);
-      return session;
+      await authService.login(email, password); // Login via AuthService
+      updateUser(); // Update user info after login
     } catch (error) {
-      console.error("Login failed:", error);
-      throw error; // Re-throw to handle in the component
+      console.error('Login failed:', error);
     }
   };
 
-  const signup = async ({ email, password, name }) => {
-    if (!email || !password || !name) {
-        throw new Error("All fields are required.");
-    }
-    try {
-        await authService.createAccount({ email, password, name });
-        await login(email, password); // Automatically log in the user
-    } catch (err) {
-        console.error("Signup error:", err);
-        throw err;
-    }
-};
-
+  // Logout function
   const logout = async () => {
-    try {
-      await authService.logout();
-      setUser(null);
-    } catch (error) {
-      console.error("Logout failed:", error);
-      throw error;
-    }
+    await authService.logout();
+    setUser({
+      id: null,
+      name: '',
+      email: '',
+      isLoggedIn: false,
+    });
   };
 
-  const value = {
-    user,
-    signup,
-    loading,
-    login,
-    logout,
-  };
+  // Check user login status on component mount
+  useEffect(() => {
+    updateUser();
+  }, []);
 
   return (
-    <AuthContext.Provider value={value}>
-      {loading ? <div>Loading...</div> : children}
-    </AuthContext.Provider>
+    <UserContext.Provider value={{ user, login, logout }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
-export default AuthContext;
+// Custom hook to use the UserContext
+export const useUser = () => {
+  return useContext(UserContext);
+};
+
+export default UserContext;
